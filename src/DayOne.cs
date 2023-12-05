@@ -5,6 +5,10 @@ namespace AdventOfCode2023;
 record DigitOcc(int Index, int Value);
 
 class DayOne : Day {
+
+    private static readonly DigitOcc _alwaysDiscartedWhileLookingForSmallestValue = new(int.MaxValue, int.MaxValue);
+    private static readonly DigitOcc _alwaysDiscartedWhileLookingForBiggestValue = new(int.MinValue, int.MinValue);
+
     public override void SolvePart1(string input) {
         string[] inputLines = input.Split('\n');
         int sum = 0;
@@ -28,7 +32,7 @@ class DayOne : Day {
 
         return result.Count > 0 
             ? (result[0], result[result.Count > 1 ? ^1 : 0]) 
-            : (new DigitOcc(int.MaxValue, int.MaxValue), new DigitOcc(int.MinValue, int.MinValue));
+            : (_alwaysDiscartedWhileLookingForSmallestValue, _alwaysDiscartedWhileLookingForBiggestValue);
     }
 
     private static (DigitOcc, DigitOcc) GetFirstAndLastWordsOfLine(string line, List<KeyValuePair<string, int>> wordToDigit) {
@@ -51,7 +55,7 @@ class DayOne : Day {
             return (result[0], result[result.Count > 1 ? ^1 : 0]);
         }
             
-        return (new DigitOcc(int.MaxValue, int.MaxValue), new DigitOcc(int.MinValue, int.MinValue));
+        return (_alwaysDiscartedWhileLookingForSmallestValue, _alwaysDiscartedWhileLookingForBiggestValue);
     }
 
     public override void SolvePart2(string input) {
