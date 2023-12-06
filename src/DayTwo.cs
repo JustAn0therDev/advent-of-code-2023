@@ -59,6 +59,37 @@ class DayTwo : Day
 
     public override void SolvePart2(string input)
     {
-        throw new NotImplementedException();
+        int sum = 0;
+
+        string[] lines = input.Split('\n');
+
+        foreach (var line in lines) {
+            string[] sets = line.Split(":")[1].Split("; ");
+
+            int biggestBlueSet = 0;
+            int biggestRedSet = 0;
+            int biggestGreenSet = 0;
+
+            foreach (var set in sets) {
+                string[] cubes = set.Trim().Split(", ");
+
+                foreach (var cubeAmount in cubes) {
+                    int amount = int.Parse(cubeAmount.Split(' ')[0]);
+                    string color = cubeAmount.Split(' ')[1];
+
+                    if (color == "blue" && amount > biggestBlueSet) {
+                        biggestBlueSet = amount;
+                    } else if (color == "red" && amount > biggestRedSet) {
+                        biggestRedSet = amount;
+                    } else if (color == "green" && amount > biggestGreenSet) {
+                        biggestGreenSet = amount;
+                    }
+                }
+            }
+
+            sum += biggestBlueSet * biggestRedSet * biggestGreenSet;
+        }
+
+        Console.WriteLine(sum);
     }
 }
