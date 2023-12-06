@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2023;
@@ -16,9 +15,6 @@ class DayTwo : Day
         string[] lines = input.Split('\n');
 
         foreach (var line in lines) {
-
-            Console.WriteLine($"Current game is: {int.Parse(Regex.Replace(line.Split(":")[0], @"\D", ""))}");
-
             string[] sets = line.Split(":")[1].Split("; ");
 
             bool isValidGame = true;
@@ -31,8 +27,9 @@ class DayTwo : Day
                 int totalGreenCubes = 0;
 
                 foreach (var cubeAmount in cubes) {
-                    int amount = int.Parse(cubeAmount.Split(' ')[0]);
-                    string color = cubeAmount.Split(' ')[1];
+                    string[] splitCubeInfo = cubeAmount.Split(' ');
+                    int amount = int.Parse(splitCubeInfo[0]);
+                    string color = splitCubeInfo[1];
 
                     if (color == "blue") {
                         totalBlueCubes += amount;
@@ -50,7 +47,9 @@ class DayTwo : Day
             }
 
             if (isValidGame) {
-                sum += int.Parse(Regex.Replace(line.Split(":")[0], @"\D", ""));
+                string gameInfo = line.Split(":")[0];
+                string gameId = Regex.Replace(gameInfo, @"\D", "");
+                sum += int.Parse(gameId);
             }
         }
 
@@ -74,8 +73,9 @@ class DayTwo : Day
                 string[] cubes = set.Trim().Split(", ");
 
                 foreach (var cubeAmount in cubes) {
-                    int amount = int.Parse(cubeAmount.Split(' ')[0]);
-                    string color = cubeAmount.Split(' ')[1];
+                    string[] splitCubeInfo = cubeAmount.Split(' ');
+                    int amount = int.Parse(splitCubeInfo[0]);
+                    string color = splitCubeInfo[1];
 
                     if (color == "blue" && amount > biggestBlueSet) {
                         biggestBlueSet = amount;
