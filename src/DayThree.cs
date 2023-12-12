@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 namespace AdventOfCode2023;
 
 class NumberOcc {
-    // The final number found
     public double Number { get; set; }
     public int Row { get; set; }
     public int StartColumn { get; set; }
@@ -16,36 +15,27 @@ class DayThree : Day
     private NumberOcc GetFullNumberWithIndex(string line, int row, int column)
     {
         // A number can only be made by having digits to the right and/or left of an already found digit.
-        NumberOcc result = new();
-        StringBuilder sb = new();
-
-        result.Row = row;
+        NumberOcc result = new() { Row = row };
  
         int columnIdx = column - 1;
 
         while (columnIdx >= 0 && char.IsDigit(line[columnIdx])) 
         {
-            sb.Append(line[columnIdx]);
             columnIdx--;
         }
 
-        result.StartColumn = columnIdx;
+        result.StartColumn = columnIdx + 1;
 
         columnIdx = column;
 
-        string firstPart = string.Join("", sb.ToString().Reverse());
-
-        sb.Clear();
-
         while (columnIdx < line.Length && char.IsDigit(line[columnIdx]))
         {
-            sb.Append(line[columnIdx]);
             columnIdx++;
         }
 
         result.EndColumn = columnIdx;
 
-        result.Number = double.Parse(firstPart + sb.ToString());
+        result.Number = double.Parse(string.Join("", line.Take(result.StartColumn..result.EndColumn)));
 
         return result;
     }
@@ -73,7 +63,7 @@ class DayThree : Day
         // If the next adjacent digit has an index smaller than or equal to the final index of any of the other digits found,
         // Or has an index bigger than or equal to the initial digit of any of the other digits found,
         // Skip that digit, since it has already been seen.
-        // Do that 'til the end of the input and return the result.
+        // Do that until we reach the end of the input and return the result.
 
         HashSet<NumberOcc> seenNumbers = new();
 
@@ -90,8 +80,6 @@ class DayThree : Day
                 if (isEnginePart)
                 {
                     // Check for adjacent numbers
-
-                    // We cannot check for upper rows if i == 0
                     if (i > 0 && j > 0 && char.IsDigit(lines[i - 1][j - 1]) && !SeenThisNumber(seenNumbers, i - 1, j - 1)) 
                     {
                         seenNumbers.Add(GetFullNumberWithIndex(lines[i - 1], i - 1, j - 1));
@@ -140,6 +128,70 @@ class DayThree : Day
 
     public override void SolvePart2(string input)
     {
-        throw new NotImplementedException();
+        double result = 0;
+
+        string[] lines = input.Split('\n');
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            for (int j = 0; j < lines[i].Length; j++)
+            {
+                if (lines[i][j] == '.') continue;
+
+                HashSet<NumberOcc> seenGearAdjacentNumbers = new();
+
+                bool isGear = lines[i][j] == '*';
+
+                if (isGear)
+                {
+                    if (i > 0 && j > 0 && char.IsDigit(lines[i - 1][j - 1]) && !SeenThisNumber(seenGearAdjacentNumbers, i - 1, j - 1)) 
+                    {
+                        seenGearAdjacentNumbers.Add(GetFullNumberWithIndex(lines[i - 1], i - 1, j - 1));
+                    }
+
+                    if (i > 0 && char.IsDigit(lines[i - 1][j]) && !SeenThisNumber(seenGearAdjacentNumbers, i - 1, j)) 
+                    {
+                        seenGearAdjacentNumbers.Add(GetFullNumberWithIndex(lines[i - 1], i - 1, j));
+                    }
+
+                    if (i > 0 && j < lines[i].Length && char.IsDigit(lines[i - 1][j + 1]) && !SeenThisNumber(seenGearAdjacentNumbers, i - 1, j + 1))
+                    {
+                        seenGearAdjacentNumbers.Add(GetFullNumberWithIndex(lines[i - 1], i - 1, j + 1));
+                    }
+
+                    if (j > 0 && char.IsDigit(lines[i][j - 1]) && !SeenThisNumber(seenGearAdjacentNumbers, i, j - 1)) 
+                    {
+                        seenGearAdjacentNumbers.Add(GetFullNumberWithIndex(lines[i], i, j - 1));
+                    }
+
+                    if (j < lines[i].Length && char.IsDigit(lines[i][j + 1]) && !SeenThisNumber(seenGearAdjacentNumbers, i, j + 1)) 
+                    {
+                        seenGearAdjacentNumbers.Add(GetFullNumberWithIndex(lines[i], i, j + 1));
+                    }
+
+                    if (j < lines[i + 1].Length && char.IsDigit(lines[i + 1][j - 1]) && !SeenThisNumber(seenGearAdjacentNumbers, i + 1, j - 1)) 
+                    {
+                        seenGearAdjacentNumbers.Add(GetFullNumberWithIndex(lines[i + 1], i + 1, j - 1));
+                    }
+
+                    if (j < lines[i + 1].Length && char.IsDigit(lines[i + 1][j]) && !SeenThisNumber(seenGearAdjacentNumbers, i + 1, j)) 
+                    {
+                        seenGearAdjacentNumbers.Add(GetFullNumberWithIndex(lines[i + 1], i + 1, j));
+                    }
+
+                    if (j < lines[i].Length && i < lines.Length && char.IsDigit(lines[i + 1][j + 1]) && !SeenThisNumber(seenGearAdjacentNumbers, i + 1, j + 1))
+                    {
+                        seenGearAdjacentNumbers.Add(GetFullNumberWithIndex(lines[i + 1], i + 1, j + 1));
+                    }
+
+                    if (seenGearAdjacentNumbers.Count == 2)
+                    {
+                        result += seenGearAdjacentNumbers.ToList()[0].Number * seenGearAdjacentNumbers.ToList()[1].Number;
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine(result);
     }
 }
