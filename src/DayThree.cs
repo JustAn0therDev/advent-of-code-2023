@@ -11,7 +11,7 @@ class NumberOcc {
 
 class DayThree : Day
 {
-    private NumberOcc GetFullNumberWithIndex(string line, int row, int column)
+    private static NumberOcc GetFullNumberWithIndex(string line, int row, int column)
     {
         // A number can only be made by having digits to the right and/or left of an already found digit.
         NumberOcc result = new() { Row = row };
